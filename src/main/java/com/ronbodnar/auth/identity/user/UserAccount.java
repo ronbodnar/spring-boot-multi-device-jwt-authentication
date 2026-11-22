@@ -1,0 +1,97 @@
+package com.ronbodnar.auth.identity.user;
+
+import com.ronbodnar.auth.identity.role.Role;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name="user_account")
+@EntityListeners(AuditingEntityListener.class)
+public class UserAccount {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "email", unique = true, nullable = false, length = 254)
+    private String email;
+
+    @Column(name = "username", unique = true, nullable = false, length = 30)
+    private String username;
+
+    @JsonIgnore
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "given_name", length = 150)
+    private String givenName;
+
+    @Column(name = "family_name", length = 150)
+    private String familyName;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "last_modified_at", nullable = false)
+    private LocalDateTime lastModifiedAt;
+
+    @ManyToMany
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return String.format("User(id=%s, username=%s, givenName=%s, familyName=%s, email=%s)",
+                this.id, this.username, this.givenName, this.familyName, this.email);
+    }
+
+    @Transient
+    public String getFullName() {
+        String fullName = null;
+        if (this.givenName != null) {
+            fullName = this.givenName;
+        }
+        if (this.familyName != null) {
+            if (fullName == null) {
+                fullName = this.familyName;
+            } else {
+                fullName += " " + this.familyName;
+            }
+        }
+        return fullName.trim();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserAccount userAccount)) return false;
+        return id != null && id.equals(userAccount.id);
+    }
+
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+}
