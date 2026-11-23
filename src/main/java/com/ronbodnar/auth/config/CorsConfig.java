@@ -7,12 +7,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
+    private final CorsProperties corsProperties;
+
+    public CorsConfig(CorsProperties corsProperties) {
+        this.corsProperties = corsProperties;
+    }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(
-                        "http://localhost:4200"
-                )
+                .allowedOrigins(corsProperties.allowedOrigins().toArray(String[]::new))
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);

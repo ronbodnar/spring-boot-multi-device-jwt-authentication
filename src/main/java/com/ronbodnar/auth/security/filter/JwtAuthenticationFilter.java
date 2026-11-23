@@ -51,11 +51,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 AuthenticationTokenType.ACCESS
         );
 
-        // Fallback to bearer token if no token found in cookies
-        if (accessToken == null) {
-            accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        }
-
         if (accessToken != null) {
             Claims claims = null;
             try {
