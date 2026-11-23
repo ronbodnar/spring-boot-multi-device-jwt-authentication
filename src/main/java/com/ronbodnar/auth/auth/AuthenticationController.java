@@ -2,7 +2,6 @@ package com.ronbodnar.auth.auth;
 
 import com.ronbodnar.auth.auth.domain.AuthenticationResponse;
 import com.ronbodnar.auth.auth.domain.AuthenticationTokenType;
-import com.ronbodnar.auth.auth.domain.TokenPair;
 import com.ronbodnar.auth.auth.dto.ForgotPasswordRequest;
 import com.ronbodnar.auth.auth.dto.LoginRequest;
 import com.ronbodnar.auth.auth.dto.RegisterRequest;
@@ -110,9 +109,7 @@ public class AuthenticationController {
         String refreshToken = jwtCookieService.getTokenFromRequest(request, AuthenticationTokenType.REFRESH);
         authenticationService.logout(refreshToken);
 
-        TokenPair tokenPair = new TokenPair("", "");
-
-        HttpHeaders headers = jwtCookieService.createCookieHeaders(tokenPair);
+        HttpHeaders headers = jwtCookieService.clearCookieHeaders();
 
         return ResponseEntity.ok().headers(headers).build();
     }

@@ -59,6 +59,19 @@ public class JwtCookieService {
         return headers;
     }
 
+    public HttpHeaders clearCookieHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(
+                HttpHeaders.SET_COOKIE,
+                buildCookie(AuthenticationTokenType.ACCESS, "", 0).toString()
+        );
+        headers.add(
+                HttpHeaders.SET_COOKIE,
+                buildCookie(AuthenticationTokenType.REFRESH, "", 0).toString()
+        );
+        return headers;
+    }
+
     public ResponseCookie createJwtCookie(
             AuthenticationTokenType tokenType,
             String sessionId,

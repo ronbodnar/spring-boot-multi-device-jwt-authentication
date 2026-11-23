@@ -29,7 +29,7 @@ public class RefreshToken {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "session_id", nullable = false, columnDefinition = "BINARY(16)")
+    @Column(name = "session_id", nullable = false, length = 255)
     private String sessionId;
 
     @Column(name = "token_hash", nullable = false, columnDefinition = "BINARY(32)")
