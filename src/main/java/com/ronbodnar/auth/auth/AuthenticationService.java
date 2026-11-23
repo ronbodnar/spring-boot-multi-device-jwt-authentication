@@ -28,8 +28,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-
 @Slf4j
 @Service
 public class AuthenticationService {
@@ -132,6 +130,12 @@ public class AuthenticationService {
 
     public void updateCurrentUser(UserAccountChangeRequest request, SecurityUserDetails securityUser) {
         userAccountService.updateUserAccount(request, securityUser);
+    }
+
+    public void logout(String refreshToken) {
+        if (refreshToken != null) {
+            refreshTokenService.invalidateToken(refreshToken);
+        }
     }
 
     @Transactional

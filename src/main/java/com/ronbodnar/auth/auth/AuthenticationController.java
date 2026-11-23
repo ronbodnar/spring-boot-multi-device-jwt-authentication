@@ -79,7 +79,6 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserAccountDTO> register(
             @RequestBody @Valid RegisterRequest registerRequest,
             HttpServletRequest request
@@ -91,7 +90,9 @@ public class AuthenticationController {
 
         HttpHeaders headers = jwtCookieService.createCookieHeaders(response.tokenPair());
 
-        return ResponseEntity.ok().headers(headers).body(UserAccountDTO.from(response.userAccount()));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .headers(headers)
+                .body(UserAccountDTO.from(response.userAccount()));
     }
 
     @PostMapping("/request-password-reset")
@@ -105,7 +106,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        String refreshToken = jwtCookieService.getTokenFromRequest(request, AuthenticationTokenType.REFRESH);
+        authenticationService.logout(refreshToken);
+
         TokenPair tokenPair = new TokenPair("", "");
 
         HttpHeaders headers = jwtCookieService.createCookieHeaders(tokenPair);

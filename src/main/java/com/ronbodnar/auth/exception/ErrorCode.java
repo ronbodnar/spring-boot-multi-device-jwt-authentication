@@ -1,6 +1,7 @@
 package com.ronbodnar.auth.exception;
 
 import lombok.Getter;
+
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpStatus;
 

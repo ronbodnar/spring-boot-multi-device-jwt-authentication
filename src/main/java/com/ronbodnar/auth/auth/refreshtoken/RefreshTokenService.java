@@ -69,6 +69,10 @@ public class RefreshTokenService {
         return userAccountService.getById(token.getUserId());
     }
 
+    public void invalidateToken(String refreshToken) {
+        refreshTokenRepository.invalidateToken(sha256(refreshToken));
+    }
+
     private void invalidateSessionId(String sessionId) {
         refreshTokenRepository.invalidateTokensForSessionId(sessionId);
     }

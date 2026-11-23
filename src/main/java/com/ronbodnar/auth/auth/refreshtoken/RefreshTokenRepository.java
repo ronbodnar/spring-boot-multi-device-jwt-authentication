@@ -18,4 +18,9 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     @Transactional
     @Query("UPDATE RefreshToken SET valid = FALSE WHERE sessionId = :sessionId")
     void invalidateTokensForSessionId(@Param("sessionId") String sessionId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE RefreshToken SET valid = FALSE WHERE tokenHash = :tokenHash")
+    void invalidateToken(@Param("tokenHash") byte[] tokenHash);
 }

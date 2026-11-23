@@ -2,8 +2,6 @@ package com.ronbodnar.auth.auth.dto;
 
 import jakarta.validation.constraints.*;
 
-import java.util.UUID;
-
 public record RegisterRequest(
         @NotBlank
         @Size(min = 3, max = 30)
@@ -34,8 +32,5 @@ public record RegisterRequest(
 
         @NotBlank
         @Size(max = 255)
-        String sessionId,
-
-        @NotNull
-        UUID code
+        String sessionId
 ) {}

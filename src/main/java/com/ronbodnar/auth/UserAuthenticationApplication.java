@@ -1,14 +1,13 @@
 package com.ronbodnar.auth;
 
-import com.ronbodnar.auth.identity.user.UserAccount;
-import com.ronbodnar.auth.identity.user.UserAccountRepository;
+import com.ronbodnar.auth.identity.role.Role;
+import com.ronbodnar.auth.identity.role.RoleRepository;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ConfigurationPropertiesScan
 @SpringBootApplication
@@ -19,16 +18,11 @@ public class UserAuthenticationApplication {
 	}
 
 	@Bean
-	CommandLineRunner init(UserAccountRepository userRepository, PasswordEncoder passwordEncoder) {
+	CommandLineRunner init(RoleRepository roleRepository) {
 		return args -> {
-			UserAccount user = new UserAccount();
-			user.setUsername("test");
-			user.setPassword(passwordEncoder.encode("password"));
-			user.setEmail("test@test.com");
-			user.setFamilyName("Test FN");
-			user.setGivenName("Test GN");
-			userRepository.save(user);
-			System.out.println("Added user: " + user.getEmail());
+			if (roleRepository.findByName("USER").isEmpty()) {
+				roleRepository.save(new Role("USER"));
+			}
 		};
 	}
 }

@@ -1,7 +1,8 @@
 package com.ronbodnar.auth.exception.payload;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ronbodnar.auth.exception.ErrorCode;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public record FieldError(
         ErrorCode errorCode,
