@@ -23,7 +23,7 @@ public class UserAuthenticationApplication {
 		return args -> {
 			UserAccount user = new UserAccount();
 			user.setUsername("test");
-			user.setPassword(passwordEncoder.encode("test"));
+			user.setPassword(passwordEncoder.encode("password"));
 			user.setEmail("test@test.com");
 			user.setFamilyName("Test FN");
 			user.setGivenName("Test GN");

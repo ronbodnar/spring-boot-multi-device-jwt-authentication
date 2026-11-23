@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(
@@ -30,8 +29,8 @@ public class RefreshToken {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "device_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID deviceId;
+    @Column(name = "session_id", nullable = false, columnDefinition = "BINARY(16)")
+    private String sessionId;
 
     @Column(name = "token_hash", nullable = false, columnDefinition = "BINARY(32)")
     private byte[] tokenHash;
@@ -48,9 +47,9 @@ public class RefreshToken {
     @Column(name = "valid", nullable = false, columnDefinition = "TINYINT", length = 1)
     private boolean valid;
 
-    public RefreshToken(Long userId, UUID deviceId, byte[] tokenHash, String ipAddress, Instant issuedAt, Instant expiresAt) {
+    public RefreshToken(Long userId, String sessionId, byte[] tokenHash, String ipAddress, Instant issuedAt, Instant expiresAt) {
         this.userId = userId;
-        this.deviceId = deviceId;
+        this.sessionId = sessionId;
         this.tokenHash = tokenHash;
         this.ipAddress = ipAddress;
         this.issuedAt = issuedAt;

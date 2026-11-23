@@ -16,7 +16,9 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 
 import java.security.Key;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -62,7 +64,7 @@ public class JwtService {
 
     public String generateAuthToken(
             AuthenticationTokenType tokenType,
-            UUID deviceId,
+            String sessionId,
             SecurityUserDetails userPrincipal
     ) {
         if (userPrincipal == null) {
@@ -71,7 +73,7 @@ public class JwtService {
 
         Map<String, Object> claims = new HashMap<>(Map.of(
                 "id", userPrincipal.getId(),
-                "deviceId", deviceId
+                "sessionId", sessionId
         ));
 
         if (tokenType == AuthenticationTokenType.ACCESS) {

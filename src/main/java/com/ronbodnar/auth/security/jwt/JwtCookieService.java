@@ -13,8 +13,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
-import java.util.UUID;
-
 @Service
 public class JwtCookieService {
 
@@ -63,7 +61,7 @@ public class JwtCookieService {
 
     public ResponseCookie createJwtCookie(
             AuthenticationTokenType tokenType,
-            UUID deviceId,
+            String sessionId,
             SecurityUserDetails userPrincipal
     ) {
         if (userPrincipal == null) {
@@ -72,7 +70,7 @@ public class JwtCookieService {
 
         long expiration = jwtProperties.token(tokenType).expiration().toMillis();
 
-        String jwt = jwtService.generateAuthToken(tokenType, deviceId, userPrincipal);
+        String jwt = jwtService.generateAuthToken(tokenType, sessionId, userPrincipal);
 
         return buildCookie(tokenType, jwt, expiration);
     }

@@ -65,11 +65,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (claims != null) {
                 if (jwtService.isInvalid(accessToken)) {
-                    String deviceIdRaw = claims.get("deviceId", String.class);
-                    UUID deviceId = deviceIdRaw == null ? null : UUID.fromString(deviceIdRaw);
+                    String sessionId = claims.get("sessionId", String.class);
                     ResponseCookie expiredToken = jwtCookieService.createJwtCookie(
                             AuthenticationTokenType.ACCESS,
-                            deviceId,
+                            sessionId,
                             null
                     );
                     response.addHeader(HttpHeaders.SET_COOKIE, expiredToken.toString());

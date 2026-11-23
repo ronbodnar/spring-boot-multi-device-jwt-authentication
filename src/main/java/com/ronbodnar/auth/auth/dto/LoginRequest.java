@@ -15,6 +15,7 @@ public record LoginRequest(
         @Size(min = 8, max = 255)
         String password,
 
-        @NotNull
-        UUID deviceId
+        @NotBlank
+        @Size(max = 255)
+        String sessionId
 ) {}

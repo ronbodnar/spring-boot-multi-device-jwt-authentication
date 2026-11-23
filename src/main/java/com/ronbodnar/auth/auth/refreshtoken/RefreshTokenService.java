@@ -5,6 +5,7 @@ import com.ronbodnar.auth.exception.ErrorCode;
 import com.ronbodnar.auth.identity.user.UserAccount;
 import com.ronbodnar.auth.identity.user.UserAccountService;
 import com.ronbodnar.auth.security.jwt.JwtService;
+
 import io.jsonwebtoken.Claims;
 
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
-import java.util.UUID;
 
 @Service
 public class RefreshTokenService {
@@ -35,14 +35,13 @@ public class RefreshTokenService {
         Instant expiresAt = claims.getExpiration().toInstant();
         byte[] hashedToken = sha256(token);
 
-        String deviceIdClaim = claims.get("deviceId", String.class);
-        UUID deviceId = UUID.fromString(deviceIdClaim);
+        String sessionId = claims.get("sessionId", String.class);
 
-        invalidateDeviceId(deviceId);
+        invalidateSessionId(sessionId);
 
         RefreshToken refreshToken = new RefreshToken(
                 userId,
-                deviceId,
+                sessionId,
                 hashedToken,
                 ip,
                 issuedAt,
@@ -70,8 +69,8 @@ public class RefreshTokenService {
         return userAccountService.getById(token.getUserId());
     }
 
-    private void invalidateDeviceId(UUID deviceId) {
-        refreshTokenRepository.invalidateTokensForDeviceId(deviceId);
+    private void invalidateSessionId(String sessionId) {
+        refreshTokenRepository.invalidateTokensForSessionId(sessionId);
     }
 
     private static byte[] sha256(String token) {

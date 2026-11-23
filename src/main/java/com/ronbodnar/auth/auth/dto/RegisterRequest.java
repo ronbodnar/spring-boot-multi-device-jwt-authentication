@@ -32,8 +32,9 @@ public record RegisterRequest(
         @Size(max = 254)
         String email,
 
-        @NotNull
-        UUID deviceId,
+        @NotBlank
+        @Size(max = 255)
+        String sessionId,
 
         @NotNull
         UUID code

@@ -15,7 +15,6 @@ import com.ronbodnar.auth.identity.user.UserAccount;
 import com.ronbodnar.auth.identity.user.UserAccountService;
 import com.ronbodnar.auth.identity.user.dto.UserAccountChangeRequest;
 import com.ronbodnar.auth.security.adapter.SecurityUserDetails;
-import com.ronbodnar.auth.security.jwt.JwtCookieService;
 import com.ronbodnar.auth.security.jwt.JwtService;
 
 import io.jsonwebtoken.Claims;
@@ -73,9 +72,9 @@ public class AuthenticationService {
             String userAgent
     ) {
         log.info(
-                "Login attempt: username={}, deviceId={}, ip={}, userAgent={}",
+                "Login attempt: username={}, sessionId={}, ip={}, userAgent={}",
                 loginRequest.username(),
-                loginRequest.deviceId(),
+                loginRequest.sessionId(),
                 ip,
                 userAgent
         );
@@ -119,7 +118,7 @@ public class AuthenticationService {
             );
         }
 
-        TokenPair tokenPair = createTokenPair(securityUser, loginRequest.deviceId(), ip);
+        TokenPair tokenPair = createTokenPair(securityUser, loginRequest.sessionId(), ip);
 
         log.info(
                 "Login successful: id={}, username={}, ip={}",
@@ -143,7 +142,7 @@ public class AuthenticationService {
 
         SecurityUserDetails securityUser = SecurityUserDetails.build(created);
 
-        TokenPair tokenPair = createTokenPair(securityUser, registerRequest.deviceId(), ip);
+        TokenPair tokenPair = createTokenPair(securityUser, registerRequest.sessionId(), ip);
 
         eventPublisher.publishEvent(new UserRegisteredEvent(created.getUsername(), created.getEmail()));
 
@@ -188,43 +187,41 @@ public class AuthenticationService {
 
         Claims claims = jwtService.getClaims(refreshToken);
 
-        String deviceIdClaim = claims.get("deviceId", String.class);
-        if (deviceIdClaim == null) {
+        String sessionId = claims.get("sessionId", String.class);
+        if (sessionId == null) {
             throw new BusinessException(
                     ErrorCode.INVALID_REFRESH_TOKEN,
-                    "Token has valid claims, but deviceId is not one of them."
+                    "Token has valid claims, but sessionId is not one of them."
             );
         }
-
-        UUID deviceId = UUID.fromString(deviceIdClaim);
 
         UserAccount userAccount = refreshTokenService.validateAndGetUser(refreshToken);
 
         SecurityUserDetails securityUser = SecurityUserDetails.build(userAccount);
 
-        TokenPair tokenPair = createTokenPair(securityUser, deviceId, ip);
+        TokenPair tokenPair = createTokenPair(securityUser, sessionId, ip);
 
         log.info(
-                "Refresh successful: id={}, username={}, ip={}, requestId={}\n",
+                "Refresh successful: id={}, username={}, ip={}, sessionId={}\n",
                 securityUser.getId(),
                 securityUser.getUsername(),
                 ip,
-                deviceId
+                sessionId
         );
 
         return new AuthenticationResponse(userAccount, tokenPair);
     }
 
-    private TokenPair createTokenPair(SecurityUserDetails securityUser, UUID deviceId, String ip) {
+    private TokenPair createTokenPair(SecurityUserDetails securityUser, String sessionId, String ip) {
         String accessToken = jwtService.generateAuthToken(
                 AuthenticationTokenType.ACCESS,
-                deviceId,
+                sessionId,
                 securityUser
         );
 
         String refreshToken = jwtService.generateAuthToken(
                 AuthenticationTokenType.REFRESH,
-                deviceId,
+                sessionId,
                 securityUser
         );
 
